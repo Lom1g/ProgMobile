@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "587476732737",
+    "project_id": "sysi-331603",
+    "storage_bucket": "sysi-331603.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587476732737:android:3504eb7c4b26905b126fc0",
+        "android_client_info": {
+          "package_name": "com.uqac_8inf865.sysi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "587476732737-ndemrj8kf50brki1i7ghhpeuf5bp5krq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uqac_8inf865.sysi",
+            "certificate_hash": "1d4a79dce0626f91415f66ede772884cd9e16e94"
+          }
+        },
+        {
+          "client_id": "587476732737-oei3gpvnpd192igdglp8ehpdejhg227t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCWIsCsLpidO_IVG5gG0mmawGe-UzPmnA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "587476732737-oei3gpvnpd192igdglp8ehpdejhg227t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
