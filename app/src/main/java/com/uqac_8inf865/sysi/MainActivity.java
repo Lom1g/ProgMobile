@@ -3,13 +3,26 @@ package com.uqac_8inf865.sysi;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -17,8 +30,14 @@ import java.util.Deque;
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+
     private Toolbar toolbar;
+
     private Deque<Integer> integerDeque;
+
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+
     private boolean flag = true;
 
     @Override
@@ -27,9 +46,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         this.bottomNavigationView = findViewById(R.id.bottomNavigationView);
+
         this.integerDeque = new ArrayDeque<>(bottomNavigationView.getMaxItemCount()-1);
+
         this.toolbar = findViewById(R.id.toolbarView);
         setSupportActionBar(toolbar);
+
         if (savedInstanceState != null){
             int id_save = savedInstanceState.getInt("id_bottomNavigationView");
             integerDeque = (ArrayDeque<Integer>) savedInstanceState.getSerializable("queue");
@@ -60,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
         });
         bottomNavigationView.setOnItemReselectedListener(item -> {
         });
+
+        askLocationPermission();
     }
 
     private Fragment getFragment(int id) {
@@ -119,5 +143,49 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt("id_bottomNavigationView", id);
         outState.putSerializable("queue",(ArrayDeque<Integer>)integerDeque);
         super.onSaveInstanceState(outState);
+    }
+
+    private void askLocationPermission() {
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        Dexter.withContext(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
+            @Override
+            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                if (ActivityCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 180000, 50, locationListener);
+            }
+
+            @Override
+            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+
+            }
+
+            @Override
+            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest,     PermissionToken permissionToken) {
+                permissionToken.continuePermissionRequest();
+            }
+        }).check();
     }
 }
