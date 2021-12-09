@@ -11,4 +11,10 @@
     <color name="background">#B5BF9F</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    // Categories
+    <color name="sports">#0A9FE6</color>
+    <color name="culture">#8B30BB</color>
+    <color name="nature">#30BB50</color>
+    <color name="others">#DA3234</color>
 </resources>

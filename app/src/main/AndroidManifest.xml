@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.uqac_8inf865.sysi">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -18,13 +19,12 @@
         android:theme="@style/Theme.MaterialComponents.NoActionBar">
         <activity
             android:name=".PopupSpot"
-            android:exported="false" />
+            android:exported="false"
+            tools:ignore="Instantiatable" />
         <activity
             android:name=".PopupAddSpot"
-            android:exported="false" />
-        <activity
-            android:name=".PopupAjoutLieu"
-            android:exported="false" />
+            android:exported="false"
+            tools:ignore="Instantiatable" />
         <activity
             android:name=".RegisterActivity"
             android:exported="false" />

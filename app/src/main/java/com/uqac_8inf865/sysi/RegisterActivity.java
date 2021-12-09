@@ -24,6 +24,8 @@ import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    private final static String TAG = "RegisterActivity";
+
     private TextInputLayout til_pseudo, til_email, til_password, til_password2;
     private Button mRegisterBtn;
     private TextView mLoginBtn;
@@ -91,13 +93,13 @@ public class RegisterActivity extends AppCompatActivity {
                     userID = fAuth.getCurrentUser().getUid();
                     DocumentReference documentReference = fStore.collection("users").document(userID);
                     Map<String,Object> user = new HashMap<>();
-                    user.put("fName",pseudo);
+                    user.put("pseudo",pseudo);
                     user.put("email",email);
+                    user.put("points",100);
                     user.put("rank","user");
-                    user.put("points",0);
                     documentReference.set(user).addOnSuccessListener((OnSuccessListener<Void>) aVoid ->
-                            Log.d("TAG1","On success : user Profile is created and register in firebase db for:"+ userID ))
-                            .addOnFailureListener(e -> Log.d("TAG1", "onFailure: "+e.toString() ));
+                            Log.d(TAG,"On success : user Profile is created and register in firebase db for:"+ userID ))
+                            .addOnFailureListener(e -> Log.d(TAG, "onFailure: "+e.toString() ));
                     startActivity(new Intent(getApplicationContext(),MainActivity.class));
                 }else{
                     Toast.makeText(RegisterActivity.this, "Error!"+task.getException().getMessage(),Toast.LENGTH_SHORT).show();

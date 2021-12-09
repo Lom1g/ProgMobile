@@ -1,71 +1,76 @@
 package com.uqac_8inf865.sysi;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.menu.MenuItemImpl;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfilFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StreamDownloadTask;
+
+import java.io.InputStream;
+import java.util.Objects;
+
 public class ProfilFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private final static String TAG = "ProfilFragment";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ImageView profilImageView;
+    private TextView profilTextView;
 
-    public ProfilFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfilFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfilFragment newInstance(String param1, String param2) {
-        ProfilFragment fragment = new ProfilFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private StorageReference storageReference;
+    private FirebaseStorage fStorage = FirebaseStorage.getInstance();
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profil, container, false);
+        View view = inflater.inflate(R.layout.fragment_profil, container, false);
+        this.profilImageView = view.findViewById(R.id.profilImageView);
+        this.profilTextView = view.findViewById(R.id.profilTextView);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        fStore.collection("users").document(fAuth.getCurrentUser()
+                .getUid()).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                String pseudo = (String) task.getResult().getData().get("pseudo");
+                // pk ça ne s'actualise pas ??
+                Log.d(TAG, pseudo);
+                profilTextView.setText(pseudo);
+            }
+        });
     }
 
     @Override

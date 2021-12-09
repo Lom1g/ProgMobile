@@ -1,61 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:gravity="center"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/title"
+    <ImageButton
+        android:id="@+id/cancelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Entrez un titre et une description"
-        android:textSize="35dp"
-        />
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="16dp"
+        android:minHeight="48dp"
+        android:src="@drawable/ic_baseline_close_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="135dp"
+        android:layout_height="127dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="144dp"
+        app:layout_constraintBottom_toTopOf="@+id/enterdescrip"
+        app:layout_constraintEnd_toStartOf="@+id/entertitle"
+        app:layout_constraintHorizontal_bias="0.268"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
-        android:hint="Title"
         android:id="@+id/entertitle"
-        android:layout_width="match_parent"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
-        />
+        android:layout_marginTop="144dp"
+        android:layout_marginEnd="40dp"
+        android:hint="Title"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:hint="Description"
         android:id="@+id/enterdescrip"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-    <EditText
-        android:hint="Category"
-        android:id="@+id/entercat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="100dp"
+        android:layout_margin="8dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="start"
+        android:hint="Description"
+        app:layout_constraintBottom_toTopOf="@+id/addButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.943" />
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <Spinner
+        android:id="@+id/action_bar_spinner"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="40dp"
+        android:minHeight="48dp"
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/imageButton"
+        app:layout_constraintTop_toBottomOf="@+id/entertitle" />
+
+    <Button
+        android:id="@+id/addButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/yesButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/primary"
-            android:textColor="@color/white"
-            android:layout_margin="16dp"
-            android:text="Yes"
-            />
-        <Button
-            android:id="@+id/noButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/primary"
-            android:textColor="@color/white"
-            android:layout_margin="16dp"
-            android:text="Non"
-            />
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="52dp"
+        android:layout_marginBottom="164dp"
+        android:backgroundTint="@color/primary"
+        android:text="Add"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
