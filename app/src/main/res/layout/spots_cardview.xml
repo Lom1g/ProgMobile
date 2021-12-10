@@ -24,8 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textColor="@color/black"
-            android:text="TEXT"
-            android:layout_margin="4dp"/>
+            android:text="TEXT" />
 
     </LinearLayout>
 

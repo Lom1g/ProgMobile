@@ -2,6 +2,7 @@ package com.uqac_8inf865.sysi;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -50,6 +51,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
@@ -62,6 +64,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -70,6 +73,8 @@ public class MapsFragment extends Fragment {
 
     private static final String TAG = "MapsFragment";
     private static final int MAP_TYPE_SATELLITE = 2;
+
+    private ActionBar actionBar;
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -82,7 +87,7 @@ public class MapsFragment extends Fragment {
     private LatLng userLatLong;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirebaseAuth fAuth;
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
 
     private GoogleMap gMap;
 
@@ -135,14 +140,13 @@ public class MapsFragment extends Fragment {
                         String category = spot.getCategory();
 
                         Map<String, Object> spotHashMap = new HashMap<>();
-                        spotHashMap.put("title", title);
-                        spotHashMap.put("coordinate", latLng);
-                        spotHashMap.put("description", description);
+                        spotHashMap.put("author", fAuth.getCurrentUser().getUid());
                         spotHashMap.put("category", category);
+                        spotHashMap.put("coordinate", latLng);
+                        spotHashMap.put("date", new Timestamp(new Date(System.currentTimeMillis())));
+                        spotHashMap.put("description", description);
                         spotHashMap.put("rating", "0");
-                        fAuth = FirebaseAuth.getInstance();
-                        String author = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
-                        spotHashMap.put("author", author);
+                        spotHashMap.put("title", title);
 
                         if (title.matches("") || description
                                 .matches("") || category
@@ -158,6 +162,7 @@ public class MapsFragment extends Fragment {
                             }
                         } else {
                             db.collection("spots_proposed").add(spotHashMap);
+                            spotHashMap.clear();
                             spot.dismiss();
                         }
                     });
@@ -199,7 +204,6 @@ public class MapsFragment extends Fragment {
                                         if (!document.getBoolean("signaled")) {
                                             db.collection("spots").document(document.getId()).update("signaled",true);
                                             db.collection("spots").document(document.getId()).update("suppress","0");
-                                            fAuth = FirebaseAuth.getInstance();
                                             String signaler = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
                                             db.collection("spots").document(document.getId()).update("signaledby",signaler);
                                         }
@@ -289,6 +293,10 @@ public class MapsFragment extends Fragment {
                 v.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.black)));
             }
         });
+        actionBar = ((MainActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("My map");
+        }
     }
 
     @Override

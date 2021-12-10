@@ -1,11 +1,14 @@
 package com.uqac_8inf865.sysi;
 
 import android.graphics.Bitmap;
+import android.os.Parcelable;
+
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Spot {
+public class Spot implements Serializable {
 
     private String author, category, description, title;
     private LatLng coordinate;

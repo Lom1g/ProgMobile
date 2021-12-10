@@ -1,11 +1,14 @@
 package com.uqac_8inf865.sysi;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,19 +19,30 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 
     private final static String TAG = "HomeFragment";
 
+    private ActionBar actionBar;
+
     private FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
 
     private RecyclerView newSpotsRecyclerView, hotSpotsRecyclerView, favoriteSpotsRecyclerView;
-    private RecyclerView.Adapter newSpotsAdapter, hotSpotsAdapter, favoriteSpotsAdapter;
+    private SpotAdapter newSpotsAdapter, hotSpotsAdapter, favoriteSpotsAdapter;
     private RecyclerView.LayoutManager newSpotsLayoutManager, hotSpotsLayoutManager, favoritesSpotsLayoutManager;
 
     private ArrayList<Spot> newSpotsArrayList, hotSpotsArrayList, favoriteSpotsArrayList;
@@ -58,29 +72,75 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ArrayList<Bitmap> bitmapArrayList = new ArrayList<>();
-        bitmapArrayList.add(BitmapFactory.decodeResource(getResources(), R.drawable.test));
-        LatLng latLng = new LatLng(-24,34);
-        newSpotsArrayList.add(new Spot("Nathan", "Sports",
-                "une description", "un titre",latLng,0,
-                bitmapArrayList));
-        hotSpotsArrayList.add(new Spot("Nathan", "Sports",
-                "une description", "un titre",latLng,0,
-                bitmapArrayList));
+        actionBar = ((MainActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("Home");
+        }
 
-        determineNewSpots();
+        determineFavoritesSpots();
 
         newSpotsAdapter = new SpotAdapter(newSpotsArrayList);
         hotSpotsAdapter = new SpotAdapter(hotSpotsArrayList);
+        favoriteSpotsAdapter = new SpotAdapter(favoriteSpotsArrayList);
 
         newSpotsLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         hotSpotsLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        favoritesSpotsLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
 
         hotSpotsRecyclerView.setLayoutManager(hotSpotsLayoutManager);
         hotSpotsRecyclerView.setAdapter(newSpotsAdapter);
+        hotSpotsAdapter.setOnItemClickListener(position -> {
+            try {
+                displaySpot(position,"hots");
+            }catch (IllegalStateException e){
+                Log.e(TAG, String.valueOf(e));
+            }
+        });
 
         newSpotsRecyclerView.setLayoutManager(newSpotsLayoutManager);
         newSpotsRecyclerView.setAdapter(newSpotsAdapter);
+        newSpotsAdapter.setOnItemClickListener(position -> {
+            try {
+                displaySpot(position,"news");
+            }catch (IllegalStateException e){
+                Log.e(TAG, String.valueOf(e));
+            }
+        });
+
+        favoriteSpotsRecyclerView.setLayoutManager(favoritesSpotsLayoutManager);
+        favoriteSpotsRecyclerView.setAdapter(favoriteSpotsAdapter);
+        favoriteSpotsAdapter.setOnItemClickListener(position -> {
+            try {
+                displaySpot(position,"favorites");
+            }catch (IllegalStateException e){
+                Log.e(TAG, String.valueOf(e));
+            }
+        });
+    }
+
+    private void displaySpot(int position, String func) {
+        Spot spot;
+        switch (func){
+            case "news":
+                spot = newSpotsArrayList.get(position);
+            case "hots":
+                spot = hotSpotsArrayList.get(position);
+            case "favorites":
+                spot = favoriteSpotsArrayList.get(position);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + func);
+        }
+        Fragment fragment = new SpotFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("spot", spot);
+        fragment.setArguments(bundle);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .setReorderingAllowed(true)
+                .addToBackStack(null)
+                .replace(R.id.fragmentContainerView, fragment, fragment.getClass().getSimpleName())
+                .commit();
     }
 
     private void determineNewSpots() {
@@ -94,6 +154,35 @@ public class HomeFragment extends Fragment {
     }
 
     private void determineFavoritesSpots(){
+        Log.d(TAG,"ici");
+        fStore.collection("users").document(fAuth.getCurrentUser().getUid())
+                .collection("favorites_spots").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> taskUser) {
+                if(taskUser.isSuccessful()){
+                    for(QueryDocumentSnapshot document : taskUser.getResult()){
+                        // que faire si l'utilisateur met en favori un spot signale ou supprime ??
+                        fStore.collection("spots").document(document.getId())
+                                .get().addOnCompleteListener(taskSpot -> {
+                                    if(taskSpot.isSuccessful()){
 
+                                        ArrayList<Bitmap> bitmapArrayList = new ArrayList<>();
+                                        bitmapArrayList.add(BitmapFactory.decodeResource(getResources(), R.drawable.test));
+
+                                        Map<String, Object> map = taskSpot.getResult().getData();
+
+                                        LatLng latLng = new LatLng(((GeoPoint) map.get("coordinate")).getLatitude(),
+                                                ((GeoPoint) map.get("coordinate")).getLongitude());
+
+                                        favoriteSpotsArrayList.add(new Spot((String) map.get("author"),(String) map.get("category") ,
+                                                (String) map.get("description"), (String) map.get("title"), latLng,
+                                                (long) map.get("rating"), bitmapArrayList ));
+                                        favoriteSpotsAdapter.notifyDataSetChanged();
+                                    }
+                                });
+                    }
+                }
+            }
+        });
     }
 }

@@ -30,12 +30,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="Favorites"
+            android:text="Hot"
             android:textSize="20sp"
             android:textColor="@color/primary"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/favoritesSpotsRecyclerView"
+            android:id="@+id/hotSpotsRecyclerView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scrollbars="horizontal"/>
@@ -44,12 +44,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="Hot"
+            android:text="Favorites"
             android:textSize="20sp"
             android:textColor="@color/primary"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/hotSpotsRecyclerView"
+            android:id="@+id/favoritesSpotsRecyclerView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scrollbars="horizontal"/>
