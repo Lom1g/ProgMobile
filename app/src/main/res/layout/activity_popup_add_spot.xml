@@ -1,85 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_width="match_parent"
     android:gravity="center"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
     <ImageButton
         android:id="@+id/cancelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="20dp"
         android:minHeight="48dp"
         android:src="@drawable/ic_baseline_close_24"
+        app:layout_constraintBottom_toTopOf="@+id/entertitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="135dp"
-        android:layout_height="127dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="144dp"
-        app:layout_constraintBottom_toTopOf="@+id/enterdescrip"
-        app:layout_constraintEnd_toStartOf="@+id/entertitle"
-        app:layout_constraintHorizontal_bias="0.268"
+        app:layout_constraintHorizontal_bias="0.94"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
+
+    <ImageButton
+        android:id="@+id/imageButtonSpot"
+        android:src="@drawable/ic_baseline_photo_camera_24"
+        android:background="@android:color/transparent"
+        android:layout_width="135dp"
+        android:layout_height="127dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="100dp"
+        app:layout_constraintEnd_toStartOf="@+id/entertitle"
+        app:layout_constraintHorizontal_bias="0.205"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/entertitle"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="144dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="36dp"
         android:hint="Title"
         android:minHeight="48dp"
+        app:layout_constraintBottom_toTopOf="@+id/action_bar_spinner"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/enterdescrip"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="8dp"
-        android:layout_marginBottom="20dp"
-        android:gravity="start"
-        android:hint="Description"
-        app:layout_constraintBottom_toTopOf="@+id/addButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.943" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Spinner
         android:id="@+id/action_bar_spinner"
-        android:layout_width="120dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginTop="170dp"
+        android:layout_marginEnd="20dp"
         android:minHeight="48dp"
         android:spinnerMode="dialog"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/imageButton"
-        app:layout_constraintTop_toBottomOf="@+id/entertitle" />
+        app:layout_constraintStart_toEndOf="@+id/imageButtonSpot"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/enterdescrip"
+        android:layout_width="300dp"
+        android:layout_height="74dp"
+        android:layout_marginTop="260dp"
+        android:gravity="start"
+        android:hint="Description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="52dp"
-        android:layout_marginBottom="164dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="30dp"
         android:backgroundTint="@color/primary"
         android:text="Add"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enterdescrip" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

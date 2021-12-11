@@ -4,23 +4,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.graphics.Bitmap;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -35,28 +29,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -64,10 +53,14 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class MapsFragment extends Fragment {
 
@@ -82,11 +75,15 @@ public class MapsFragment extends Fragment {
     private FloatingActionButton buttonAddSpot, buttonFilterSpot;
 
     private FragmentActivity activity;
-    private boolean setzoom, modeEdition;
+    private boolean setzoom;
+    private boolean modeEdition = false;
     private boolean modeGeoLoc = false;
     private LatLng userLatLong;
+    private Bitmap image;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseStorage fStorage = FirebaseStorage.getInstance();
+    private StorageReference storageReference = fStorage.getReference();
     private FirebaseAuth fAuth = FirebaseAuth.getInstance();
 
     private GoogleMap gMap;
@@ -104,7 +101,6 @@ public class MapsFragment extends Fragment {
 
             gMap = googleMap;
 
-            PopupAddSpot spot = new PopupAddSpot(activity);
             PopupSpot infospot = new PopupSpot(activity);
 
             //add markers on the Map
@@ -115,7 +111,6 @@ public class MapsFragment extends Fragment {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 GeoPoint geoPoint = document.getGeoPoint("coordinate");
                                 LatLng latLngMarker = new LatLng(Objects.requireNonNull(geoPoint).getLatitude(), geoPoint.getLongitude());
-                                Log.d(TAG, latLngMarker.toString());
                                 MarkerOptions markerOptions = new MarkerOptions();
                                 markerOptions.position(latLngMarker);
                                 markerOptions.title((String) document.getData().get("title"));
@@ -130,45 +125,11 @@ public class MapsFragment extends Fragment {
 
             // interaction avec la carte
             googleMap.setOnMapClickListener(latLng -> {
+                PopupAddSpot spot = new PopupAddSpot(activity, latLng);
                 // ajout de spots
                 if (modeEdition){
-
-                    spot.getYesButton().setOnClickListener(v -> {
-
-                        String title = spot.getTitle();
-                        String description = spot.getDescription();
-                        String category = spot.getCategory();
-
-                        Map<String, Object> spotHashMap = new HashMap<>();
-                        spotHashMap.put("author", fAuth.getCurrentUser().getUid());
-                        spotHashMap.put("category", category);
-                        spotHashMap.put("coordinate", latLng);
-                        spotHashMap.put("date", new Timestamp(new Date(System.currentTimeMillis())));
-                        spotHashMap.put("description", description);
-                        spotHashMap.put("rating", "0");
-                        spotHashMap.put("title", title);
-
-                        if (title.matches("") || description
-                                .matches("") || category
-                                .matches("")) {
-                            if (category.matches("")) {
-                                spot.findViewById(R.id.action_bar_spinner).requestFocus();
-                            }
-                            if (description.matches("")) {
-                                spot.findViewById(R.id.enterdescrip).requestFocus();
-                            }
-                            if (title.matches("")) {
-                                spot.findViewById(R.id.entertitle).requestFocus();
-                            }
-                        } else {
-                            db.collection("spots_proposed").add(spotHashMap);
-                            spotHashMap.clear();
-                            spot.dismiss();
-                        }
-                    });
-
-                    spot.getNoButton().setOnClickListener(v -> spot.dismiss());
-
+                    declareYesButton(spot, latLng);
+                    declareNoButton(spot);
                     spot.build();
                 }
             });
@@ -263,12 +224,34 @@ public class MapsFragment extends Fragment {
         }
     };
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            if(getArguments().size() > 1){
+                PopupAddSpot popupAddSpot = new PopupAddSpot(getActivity(), getArguments().getParcelable("coordinate"));
+                popupAddSpot.getTitleTextView().setText(getArguments().getString("title"));
+                popupAddSpot.getDescriptionTextView().setText(getArguments().getString("description"));
+                popupAddSpot.getSpinner().setSelection(getArguments().getInt("category"));
+                popupAddSpot.getImageSpot().setImageBitmap(getArguments().getParcelable("spotPicture"));
+                this.image = getArguments().getParcelable("spotPicture");
+                declareYesButton(popupAddSpot, getArguments().getParcelable("coordinate"));
+                declareNoButton(popupAddSpot);
+                popupAddSpot.build();
+            }
+            else{
+                this.modeGeoLoc = getArguments().getBoolean("modeGeoLoc");
+            }
+        }
+        Log.d(TAG, "OnCreate");
+        setHasOptionsMenu(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
         this.activity = this.getActivity();
         View view = inflater.inflate(R.layout.fragment_maps, container, false);
         this.buttonAddSpot = view.findViewById(R.id.floatingAddButtonView);
@@ -287,10 +270,10 @@ public class MapsFragment extends Fragment {
         buttonAddSpot.setOnClickListener(v ->{
             if(modeEdition){
                 modeEdition = false;
-                v.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                v.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.action)));
             }else{
                 modeEdition = true;
-                v.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.black)));
+                v.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
             }
         });
         actionBar = ((MainActivity) requireActivity()).getSupportActionBar();
@@ -303,6 +286,11 @@ public class MapsFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.toolbar_maps_menu,menu);
+        if(modeGeoLoc){
+            menu.getItem(0).setIcon(R.drawable.ic_baseline_gps_on_24);
+        }else{
+            menu.getItem(0).setIcon(R.drawable.ic_baseline_gps_off_24);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -311,13 +299,80 @@ public class MapsFragment extends Fragment {
         if (item.getItemId() == R.id.item_gps) {
             if(!modeGeoLoc && askLocationPermission()){
                 modeGeoLoc = true;
-                item.setIcon(R.drawable.ic_baseline_gps_on_24);
             }else if(modeGeoLoc){
                 modeGeoLoc = false;
-                item.setIcon(R.drawable.ic_baseline_gps_off_24);
             }
+            refreshFragment();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void declareYesButton(PopupAddSpot spot, LatLng latLng){
+        spot.getYesButton().setOnClickListener(v -> {
+
+            String title = spot.getTitle();
+            String description = spot.getDescription();
+            String category = spot.getCategory();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            InputStream is = new ByteArrayInputStream(baos.toByteArray());
+            UUID randomUuid = UUID.randomUUID();
+            StorageReference imageRef = storageReference.child("pictures_spots/" +
+                    randomUuid.toString());
+            imageRef.putStream(is);
+
+            Map<String, Object> spotHashMap = new HashMap<>();
+            spotHashMap.put("author", fAuth.getCurrentUser().getUid());
+            spotHashMap.put("category", category);
+            spotHashMap.put("coordinate", latLng);
+            spotHashMap.put("date", new Timestamp(new Date(System.currentTimeMillis())));
+            spotHashMap.put("description", description);
+            spotHashMap.put("rating", "0");
+            spotHashMap.put("title", title);
+
+            if (title.matches("") || description
+                    .matches("") || category
+                    .matches("")) {
+                if (category.matches("")) {
+                    spot.findViewById(R.id.action_bar_spinner).requestFocus();
+                }
+                if (description.matches("")) {
+                    spot.findViewById(R.id.enterdescrip).requestFocus();
+                }
+                if (title.matches("")) {
+                    spot.findViewById(R.id.entertitle).requestFocus();
+                }
+            } else {
+                db.collection("spots_proposed").add(spotHashMap);
+                spotHashMap.clear();
+                spot.clear();
+                spot.dismiss();
+            }
+        });
+    }
+
+    private void declareNoButton(PopupAddSpot spot){
+        spot.getNoButton().setOnClickListener(v -> {
+            spot.clear();
+            spot.dismiss();
+        });
+    }
+
+
+
+
+    public void refreshFragment(){
+        Bundle bundle = new Bundle();
+        Fragment fragment = new MapsFragment();
+        bundle.putBoolean("modeGeoLoc", modeGeoLoc);
+        fragment.setArguments(bundle);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .setReorderingAllowed(true)
+                .addToBackStack(null)
+                .replace(R.id.fragmentContainerView, fragment, fragment.getClass().getSimpleName())
+                .commit();
     }
 
     private boolean askLocationPermission() {

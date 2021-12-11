@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"/>
+
+    <ImageButton
+        android:id="@+id/buttonPicture"
+        android:src="@drawable/ic_baseline_camera_alt_24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"/>
+
+    <ImageView
+        android:id="@+id/imageViewCapture"
+        android:scaleType="fitXY"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="" />
+
+    <ImageButton
+        android:id="@+id/buttonValidate"
+        android:visibility="invisible"
+        android:src="@drawable/ic_baseline_done_40"
+        android:background="@android:color/transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_gravity="end|top"/>
+
+    <ImageButton
+        android:id="@+id/buttonCancel"
+        android:visibility="invisible"
+        android:src="@drawable/ic_baseline_close_40"
+        android:background="@android:color/transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_gravity="start|top" />
+
+
+</FrameLayout>

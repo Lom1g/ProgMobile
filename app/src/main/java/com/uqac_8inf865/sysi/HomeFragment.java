@@ -1,7 +1,6 @@
 package com.uqac_8inf865.sysi;
 
-import android.app.Activity;
-import android.content.Context;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -30,7 +29,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 
