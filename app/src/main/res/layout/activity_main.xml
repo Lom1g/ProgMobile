@@ -10,10 +10,10 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarView"
+        style="@style/ToolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:menu="@menu/toolbar_home_menu"
-        style="@style/ToolBar"/>
+        app:menu="@menu/toolbar_home_menu" />
 
     <FrameLayout
         android:id="@+id/fragmentContainerView"
@@ -24,12 +24,12 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
+        style="@style/NavigationBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:itemIconTint="@color/bottom_navigation"
         app:itemTextColor="@color/bottom_navigation"
-        app:menu="@menu/bottom_navigation_menu"
-        style="@style/NavigationBar"/>
+        app:menu="@menu/bottom_navigation_menu" />
 
 </RelativeLayout>
