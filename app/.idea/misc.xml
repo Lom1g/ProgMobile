@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.10833333333333334" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.10833333333333334" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/drawable/ic_baseline_photo_camera_24.xml" value="0.10833333333333334" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/activity_login.xml" value="0.22" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/activity_main.xml" value="0.22" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/activity_popup_add_spot.xml" value="0.1" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/activity_popup_spot.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/activity_register.xml" value="0.1" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/fragment_camera.xml" value="0.14990942028985507" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/fragment_community.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/fragment_home.xml" value="0.22" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/fragment_maps.xml" value="0.1" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/fragment_profil.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/fragment_spot.xml" value="0.14990942028985507" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/spinner_item_layout_resource.xml" value="0.1503623188405797" />
+        <entry key="..\:/Users/33665/Desktop/UQAC/Programmation de plateforme mobile/projet/ProgMobile/app/src/main/res/layout/spots_cardview.xml" value="0.1503623188405797" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
