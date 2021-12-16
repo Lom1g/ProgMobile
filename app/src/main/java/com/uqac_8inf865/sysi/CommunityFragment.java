@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +30,7 @@ public class CommunityFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Button mValidatebtn;
 
     public CommunityFragment() {
         // Required empty public constructor
@@ -75,5 +78,22 @@ public class CommunityFragment extends Fragment {
         if (actionBar != null) {
             actionBar.setTitle("My community");
         }
+
+        EditText username = (EditText) view.findViewById(R.id.Username);
+        EditText userage = (EditText) view.findViewById(R.id.UserAge);
+        EditText userlocation = (EditText) view.findViewById(R.id.UserLocation);
+
+        mValidatebtn = view.findViewById(R.id.button);
+        mValidatebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String choosednamed = username.getText().toString();
+                String choosedage = userage.getText().toString();
+                String choosedlocation = userlocation.getText().toString();
+                username.setText(choosednamed);
+                userage.setText(choosedage);
+                userlocation.setText(choosedlocation);
+            }
+        });
     }
 }
